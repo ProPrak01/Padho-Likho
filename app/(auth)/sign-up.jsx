@@ -51,7 +51,7 @@ const SingUp = () => {
   resizeMode='contain'
   className="w-[115px] h-[35px]"
 />
-<Text className="text-2xl text-black text-semibold mt-10 font-psemibold">Sign up to HUD</Text>
+<Text className="text-2xl text-black text-semibold mt-10 font-psemibold">Sign up to Padho Likho</Text>
 <FormField
     title="Name"
     value={form.username}

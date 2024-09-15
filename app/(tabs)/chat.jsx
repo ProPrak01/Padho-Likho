@@ -354,7 +354,7 @@ const ChatSection = () => {
         visible={addUserModal}
         onRequestClose={() => setAddUserModal(false)}
       >
-        <View className="flex-1 bg-[#1E201E] justify-center items-center">
+        <View className="flex-1 bg-[#1E201E] justify-center items-center  zIndex: 999">
           <View className="bg-[#3C3D37] p-4 rounded-lg w-4/5">
             <Text className="text-[#ECDFCC] text-lg font-pbold mb-4">
               Add user to chat

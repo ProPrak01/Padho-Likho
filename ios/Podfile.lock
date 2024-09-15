@@ -65,6 +65,8 @@ PODS:
     - Yoga
   - ExpoPrint (13.0.1):
     - ExpoModulesCore
+  - ExpoScreenCapture (6.0.1):
+    - ExpoModulesCore
   - EXSplashScreen (0.27.5):
     - DoubleConversion
     - ExpoModulesCore
@@ -1416,6 +1418,7 @@ DEPENDENCIES:
   - ExpoMediaLibrary (from `../node_modules/expo-media-library/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoPrint (from `../node_modules/expo-print/ios`)
+  - ExpoScreenCapture (from `../node_modules/expo-screen-capture/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
@@ -1532,6 +1535,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-modules-core"
   ExpoPrint:
     :path: "../node_modules/expo-print/ios"
+  ExpoScreenCapture:
+    :path: "../node_modules/expo-screen-capture/ios"
   EXSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
   FBLazyVector:
@@ -1684,6 +1689,7 @@ SPEC CHECKSUMS:
   ExpoMediaLibrary: 81573bcbd50cbd0a3ef57216c93593157d32b558
   ExpoModulesCore: 30e1ed4659356cb9a84e0e5ddf1d090d735973c1
   ExpoPrint: 9e221bf0988c77c8a270a7df7135c65c2a396e0a
+  ExpoScreenCapture: ece7593264d1384aff2481eea29f9a238b484090
   EXSplashScreen: fbf0ec78e9cee911df188bf17b4fe51d15a84b87
   FBLazyVector: 7e977dd099937dc5458851233141583abba49ff2
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120

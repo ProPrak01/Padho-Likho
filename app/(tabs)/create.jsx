@@ -6,19 +6,21 @@ import {
   TouchableOpacity,
   Alert,
   Dimensions,
+  Platform,
 } from "react-native";
 import { Camera } from "expo-camera";
 import Pdf from "react-native-pdf";
 import { useIsFocused } from "@react-navigation/native";
 import { CameraView } from "expo-camera";
 import { Buffer } from "buffer";
+import * as FileSystem from "expo-file-system";
 
 export default function Create() {
-  
   const [facing, setFacing] = useState("back");
   const [permission, setPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState(null); // To store the Cloudinary PDF URL
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [localPdfPath, setLocalPdfPath] = useState(null);
   const isFocused = useIsFocused();
 
   const decodeUrl = (encodedUrl) => {
@@ -33,35 +35,37 @@ export default function Create() {
 
   const handleClosePdfViewer = () => {
     setPdfUrl(null);
+    setLocalPdfPath(null);
     setScanned(false);
   };
+
+  const downloadPdf = async (url) => {
+    const filename = url.substring(url.lastIndexOf("/") + 1);
+    const fileUri = `${FileSystem.documentDirectory}${filename}`;
+
+    try {
+      const { uri } = await FileSystem.downloadAsync(url, fileUri);
+      console.log("File downloaded to:", uri);
+      return uri;
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      Alert.alert(
+        "Download Error",
+        "Failed to download the PDF. Please try again."
+      );
+      return null;
+    }
+  };
+
   const PDFViewer = ({ uri }) => {
-    const source = { uri: uri, cache: true };
+    const source =
+      Platform.OS === "ios"
+        ? { uri: uri, cache: true }
+        : { uri: localPdfPath, cache: false };
 
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "#ECDFCC", // Dark overlay for focus
-          width: "100%",
-        }}
-      >
-        <View
-          style={{
-            width: "89%",
-            height: "87%", // Adjust height as necessary
-            backgroundColor: "#3C3D37", // Light background
-            borderRadius: 20, // Rounded corners
-            overflow: "hidden", // Ensure borders are clean
-            shadowColor: "#000", // Optional shadow for elevation
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
-            elevation: 5, // For Android shadow
-          }}
-        >
+      <View style={styles.pdfContainer}>
+        <View style={styles.pdfWrapper}>
           <Pdf
             source={source}
             onLoadComplete={(numberOfPages, filePath) => {
@@ -73,38 +77,35 @@ export default function Create() {
             onError={(error) => {
               console.log(error);
             }}
-            style={{
-              flex: 1,
-              padding: 10,
-              backgroundColor: "#fff", // Add light padding for a clean look
-            }}
+            style={styles.pdf}
           />
           <TouchableOpacity
-            style={{
-              padding: 20,
-              backgroundColor: "#3C3D37",
-              alignSelf: "center",
-              width: "100%",
-              alignItems: "center",
-            }}
+            style={styles.closeButton}
             onPress={handleClosePdfViewer}
           >
-            <Text
-              style={{ color: "#ECDFCC", fontSize: 20, fontWeight: "bold" }}
-            >
-              Close
-            </Text>
+            <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
   };
+
   useEffect(() => {
     (async () => {
       const cameraStatus = await Camera.requestCameraPermissionsAsync();
       setPermission(cameraStatus.status === "granted");
     })();
   }, []);
+
+  useEffect(() => {
+    if (pdfUrl && Platform.OS === "android") {
+      downloadPdf(pdfUrl).then((localUri) => {
+        if (localUri) {
+          setLocalPdfPath(localUri);
+        }
+      });
+    }
+  }, [pdfUrl]);
 
   if (permission === null) {
     return <View />;
@@ -128,14 +129,12 @@ export default function Create() {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    // setPdfUrl(data);
     console.log(data);
     if (data.includes(".pdf")) {
-      // Set the PDF URL to be displayed
       setPdfUrl(data);
     } else {
       const decryptedUrl = decodeUrl(data);
-      if (decryptedUrl.includes(".pdf")) {
+      if (decryptedUrl && decryptedUrl.includes(".pdf")) {
         setPdfUrl(decryptedUrl);
       } else {
         Alert.alert(
@@ -149,16 +148,11 @@ export default function Create() {
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
-  //   <BarCodeScanner
-  //   onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-  //   style={StyleSheet.absoluteFillObject}
-  //   facing={facing}
-  // />
-  //pdfUrl
+
   return (
     <View style={styles.container}>
-      {/* Show PDF if the URL is available */}
-      {pdfUrl ? (
+      {(pdfUrl && Platform.OS === "ios") ||
+      (localPdfPath && Platform.OS === "android") ? (
         <PDFViewer uri={pdfUrl} />
       ) : (
         isFocused && (
@@ -173,8 +167,7 @@ export default function Create() {
         )
       )}
 
-      {/* Controls */}
-      {!pdfUrl && (
+      {!pdfUrl && !localPdfPath && (
         <View style={styles.controlsContainer}>
           <TouchableOpacity
             onPress={toggleCameraFacing}
@@ -183,7 +176,7 @@ export default function Create() {
             <Text style={styles.buttonText}>Flip Camera</Text>
           </TouchableOpacity>
 
-          {scanned && !pdfUrl && (
+          {scanned && (
             <TouchableOpacity
               onPress={() => setScanned(false)}
               style={styles.scanAgainButton}
@@ -246,9 +239,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  pdfContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ECDFCC",
+    width: "100%",
+  },
+  pdfWrapper: {
+    width: "89%",
+    height: "87%",
+    backgroundColor: "#3C3D37",
+    borderRadius: 20,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
   pdf: {
     flex: 1,
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    padding: 10,
+    backgroundColor: "#fff",
+  },
+  closeButton: {
+    padding: 20,
+    backgroundColor: "#3C3D37",
+    alignSelf: "center",
+    width: "100%",
+    alignItems: "center",
+  },
+  closeButtonText: {
+    color: "#ECDFCC",
+    fontSize: 20,
+    fontWeight: "bold",
   },
 });

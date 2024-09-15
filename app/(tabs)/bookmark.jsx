@@ -7,6 +7,8 @@ import {
   Alert,
   Image,
   TextInput,
+  Modal,
+  Platform,
 } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 import * as FileSystem from "expo-file-system";
@@ -18,6 +20,7 @@ export default function ImageScanner() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scannedImages, setScannedImages] = useState([]);
   const [pdfName, setPdfName] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
   const cameraRef = useRef(null);
   const isFocused = useIsFocused();
 
@@ -53,32 +56,16 @@ export default function ImageScanner() {
   };
 
   const promptForPdfName = () => {
-    Alert.prompt(
-      "PDF Name",
-      "Enter a name for your PDF",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel",
-        },
-        {
-          text: "OK",
-          onPress: (name) => {
-            if (name && name.trim() !== "") {
-              setPdfName(name.trim());
-              createPDF(name.trim());
-            } else {
-              Alert.alert(
-                "Invalid Name",
-                "Please enter a valid name for your PDF."
-              );
-            }
-          },
-        },
-      ],
-      "plain-text"
-    );
+    setModalVisible(true);
+  };
+
+  const handleCreatePDF = () => {
+    if (pdfName && pdfName.trim() !== "") {
+      setModalVisible(false);
+      createPDF(pdfName.trim());
+    } else {
+      Alert.alert("Invalid Name", "Please enter a valid name for your PDF.");
+    }
   };
 
   const createPDF = async (name) => {
@@ -107,7 +94,7 @@ export default function ImageScanner() {
             ${imageAssets
               .map(
                 (base64) =>
-                  `<img src="${base64}" style="width: 100%; height: auto; margin-bottom: 20px;  max-width: 800px;" />`
+                  `<img src="${base64}" style="width: 100%; height: auto; margin-bottom: 20px; max-width: 800px;" />`
               )
               .join("")}
           </body>
@@ -124,6 +111,7 @@ export default function ImageScanner() {
       console.log(`PDF created at: ${pdfUri}`);
       Alert.alert("Success", `PDF "${name}" created successfully!`);
       setScannedImages([]);
+      setPdfName("");
     } catch (error) {
       console.error("Error creating PDF:", error);
       Alert.alert("Error", "Failed to create PDF. Please try again.");
@@ -167,6 +155,38 @@ export default function ImageScanner() {
           <Image key={index} source={{ uri }} style={styles.thumbnail} />
         ))}
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Enter a name for your PDF</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={setPdfName}
+              value={pdfName}
+              placeholder="PDF Name"
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.createButton]}
+                onPress={handleCreatePDF}
+              >
+                <Text style={styles.buttonText}>Create</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -222,5 +242,58 @@ const styles = StyleSheet.create({
     height: 50,
     margin: 5,
     borderRadius: 5,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 18,
+  },
+  input: {
+    width: 200,
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 15,
+  },
+  modalButton: {
+    borderRadius: 5,
+    padding: 10,
+    elevation: 2,
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  cancelButton: {
+    backgroundColor: "#F194FF",
+  },
+  createButton: {
+    backgroundColor: "#2196F3",
   },
 });

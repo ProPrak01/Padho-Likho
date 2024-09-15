@@ -10,7 +10,7 @@ const SearchInput = ({title,value,placeholder,handleChangeText,otherStyles, ...p
     <TextInput
         className="flex-1 text-[#3C3D37] text-base mt-0.5 font-pregular"
         value={value}
-        placeholder="Search PDF"
+        placeholder={placeholder}
         placeholderTextColor="#3C3D37"
         onChangeText={handleChangeText}
         secureTextEntry = {title === 'Password' && !showPassword}

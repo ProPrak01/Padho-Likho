@@ -21,6 +21,8 @@ import QRCode from "react-native-qrcode-svg";
 
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
+import { Buffer } from "buffer";
+import * as ScreenCapture from "expo-screen-capture";
 
 const Home = () => {
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] =
@@ -38,6 +40,29 @@ const Home = () => {
 
   const [qrCodeValue, setQrCodeValue] = useState("");
   const [qrCodeModalVisible, setQrCodeModalVisible] = useState(false);
+  React.useEffect(() => {
+    const activate = async () => {
+      await ScreenCapture.preventScreenCaptureAsync();
+    };
+    activate();
+    return () => {
+      const deactivate = async () => {
+        await ScreenCapture.allowScreenCaptureAsync();
+      };
+      deactivate();
+    };
+  }, []);
+
+  const encodeUrl = (url) => {
+    try {
+      const encodedUrl = Buffer.from(url).toString("base64");
+      return encodedUrl;
+    } catch (error) {
+      console.error("Encoding error:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     (async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -110,13 +135,16 @@ const Home = () => {
   const uploadToCloudinary = async (uri) => {
     const cloudName = "dv9m6ghqf";
     const uploadPreset = "pdfshack";
-    const apiUrl = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`; // Use 'auto' instead of 'upload' for PDFs and other file types.
+    const apiUrl = `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`;
+
+    // Extract filename from URI
+    const filename = uri.split("/").pop();
 
     const formData = new FormData();
     formData.append("file", {
-      uri: uri, // The URI of the PDF file.
-      type: "application/pdf", // The correct MIME type for a PDF.
-      name: `${uri}.pdf`, // The name to assign the uploaded file.
+      uri: uri,
+      type: "application/pdf",
+      name: filename,
     });
     formData.append("upload_preset", uploadPreset);
 
@@ -128,7 +156,9 @@ const Home = () => {
 
       const data = await response.json();
       if (response.ok) {
-        return data.secure_url; // Return the secure URL of the uploaded PDF.
+        // Construct a URL that directly accesses the PDF
+        const pdfUrl = `https://res.cloudinary.com/${cloudName}/raw/upload/${data.public_id}`;
+        return pdfUrl;
       } else {
         throw new Error(data.error.message || "Upload failed");
       }
@@ -137,7 +167,6 @@ const Home = () => {
       throw error;
     }
   };
-
   const handlePdfPress = (item) => {
     setSelectedPdf(item);
     setModalVisible(true);
@@ -157,7 +186,9 @@ const Home = () => {
       setModalVisible(false);
       const url = await uploadToCloudinary(selectedPdf.uri);
       setUploadedUrl(url);
-      setQrCodeValue(url);
+      console.log(" URL:", url);
+      const encrypted = encodeUrl(url);
+      setQrCodeValue(encrypted);
       setQrCodeModalVisible(true);
       Alert.alert(
         "Upload Successful",
@@ -165,10 +196,7 @@ const Home = () => {
         [{ text: "OK", onPress: () => setUploadedUrl(null) }]
       );
     } catch (error) {
-      Alert.alert(
-        "Upload Failed",
-        "An error occurred while uploading the PDF."
-      );
+      Alert.alert(error.message);
     }
   };
 
@@ -271,7 +299,11 @@ const Home = () => {
             <Text className="text-[#ECDFCC] font-pbold">Scan QR</Text>
           </TouchableOpacity>
         </View>
-        <SearchInput value={searchQuery} handleChangeText={setSearchQuery} />
+        <SearchInput
+          value={searchQuery}
+          handleChangeText={setSearchQuery}
+          placeholder={"Search PDF"}
+        />
         <View className="w-full pt-5 flex-1 pb-8">
           <Text className="text-gray-100 text-lg font-pregular mb-4">
             Your PDFs

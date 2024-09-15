@@ -211,9 +211,6 @@ const ChatSection = () => {
       <View className="my-6 px-4 space-y-6">
         <View className="justify-between items-start flex-row mb-6">
           <View>
-            <Text className="font-pmedium text-sm text-gray-300">
-              Welcome to
-            </Text>
             <Text className="text-2xl font-psemibold text-[#ECDFCC]">
               Chat Section
             </Text>
@@ -225,7 +222,11 @@ const ChatSection = () => {
             <Text className="text-[#ECDFCC] font-pbold">New Chat</Text>
           </TouchableOpacity>
         </View>
-        <SearchInput value={searchQuery} handleChangeText={setSearchQuery} />
+        <SearchInput
+          value={searchQuery}
+          handleChangeText={setSearchQuery}
+          placeholder={"Search Chats..."}
+        />
         <View className="w-full pt-5 flex-1 pb-8">
           <Text className="text-gray-100 text-lg font-pregular mb-4">
             Your Chats

@@ -11,13 +11,26 @@ import { Camera } from "expo-camera";
 import Pdf from "react-native-pdf";
 import { useIsFocused } from "@react-navigation/native";
 import { CameraView } from "expo-camera";
+import { Buffer } from "buffer";
 
 export default function Create() {
+  
   const [facing, setFacing] = useState("back");
   const [permission, setPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null); // To store the Cloudinary PDF URL
   const isFocused = useIsFocused();
+
+  const decodeUrl = (encodedUrl) => {
+    try {
+      const decodedUrl = Buffer.from(encodedUrl, "base64").toString("utf8");
+      return decodedUrl;
+    } catch (error) {
+      console.error("Decoding error:", error);
+      return null;
+    }
+  };
+
   const handleClosePdfViewer = () => {
     setPdfUrl(null);
     setScanned(false);
@@ -115,12 +128,22 @@ export default function Create() {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    setPdfUrl(data);
-    // if (data.includes("cloudinary.com")) {
-    //  // Set the PDF URL to be displayed
-    // } else {
-    //   Alert.alert("Invalid QR", "This QR code does not contain a valid PDF link.");
-    // }
+    // setPdfUrl(data);
+    console.log(data);
+    if (data.includes(".pdf")) {
+      // Set the PDF URL to be displayed
+      setPdfUrl(data);
+    } else {
+      const decryptedUrl = decodeUrl(data);
+      if (decryptedUrl.includes(".pdf")) {
+        setPdfUrl(decryptedUrl);
+      } else {
+        Alert.alert(
+          "Invalid QR",
+          "This QR code does not contain a valid PDF link."
+        );
+      }
+    }
   };
 
   function toggleCameraFacing() {

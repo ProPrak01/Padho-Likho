@@ -20,14 +20,20 @@
       "package": "com.aora.appwrite",
       "bundleIdentifier": "com.android.hudApp",
       "infoPlist": {
-        "LSApplicationQueriesSchemes": ["file"],
+        "LSApplicationQueriesSchemes": [
+          "file"
+        ],
         "NSCameraUsageDescription": "This app uses the camera to take photos and videos."
-
       }
     },
     "android": {
       "permissions": [
-      "CAMERA"
+        "CAMERA",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -57,14 +63,13 @@
           "isAccessMediaLocationEnabled": true
         }
       ]
-     
     ],
     "extra": {
       "router": {
         "origin": false
       },
       "eas": {
-        "projectId": "400b7386-12a4-4f47-ac67-016b465c7d2e"
+        "projectId": "abdb2c76-9559-41fc-b1db-d78b540543fc"
       }
     }
   }

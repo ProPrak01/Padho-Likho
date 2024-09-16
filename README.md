@@ -37,6 +37,12 @@ as the app decripts the pdf
 [![Everything Is AWESOME](https://img.youtube.com/vi/Jj0kmasN5K0/0.jpg)](https://www.youtube.com/watch?v=Jj0kmasN5K0)
 
 
+## Flowcart of working in details:
+<p align="center">
+  <img src="./images/flowchart.png" width="500" title="hover text">
+</p>
+
+
 ## Tech Stack
 - **Appwrite**: For backend tasks (user auth , live chat , etc)
 - **React Native**: For building the mobile app.

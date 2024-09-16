@@ -5,7 +5,7 @@
 ## Features
 
 ### PDF Creation and Management
-- **Image to PDF Conversion**: Capture images and convert them into PDFs directly within the app.
+- **Image to PDF Conversion**: Capture images and convert them into PDFs directly within the app utilizing photo aligning and resizing.
 - **Secure PDF Storage**: Upload PDFs to Cloudinary with encryption, ensuring that sensitive information remains secure.
 - **Encrypted QR Codes**: Generate encrypted QR codes for uploaded PDFs. The links to the PDFs are hidden from the user and only accessible through the QR codes.
 
@@ -94,7 +94,7 @@ Below is a list of key dependencies used in this project:
 | `stream-chat-expo`                     | ^5.37.0     |
 
 ## Future Implications
-We welcome contributions to Padho-Likho! To contribute, fork the repository, make your changes, and submit a pull request.
+Implementing video sending and streaming (content related to doubt solving , etc. in the chat)
 
 ## License
 This project is licensed under the Apache-2.0 license. See the LICENSE file for more information.

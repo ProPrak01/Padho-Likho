@@ -50,7 +50,7 @@ npm install
 ```
 ## Running the App
 ### To start the development server and run the app on different platforms:
-
+(more detailed info : https://docs.expo.dev/)
 Start Development Server ios : 
 ```bash
 npx expo run:ios --device

@@ -37,7 +37,6 @@ as the app decripts the pdf
 - **Expo**: For app development and deployment.
 - **Cloudinary**: For PDF storage and management.
 - **CryptoJS**: For encryption and decryption of PDF links.
-- **Stream-Chat-Expo**: For implementing chat features.
 - **Various Expo Modules**: Such as `expo-camera`, `expo-barcode-scanner`, and `expo-file-system` for core functionalities.
 
 ## Installation

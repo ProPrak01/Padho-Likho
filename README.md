@@ -70,7 +70,8 @@ https://expo.dev/accounts/proprak/projects/padho-likho/builds/24af0ab0-5868-4a2b
 Download aab file link: 
 ```bash
 [https://expo.dev/accounts/proprak/projects/padho-likho/builds/24af0ab0-5868-4a2b-9058-94db58beb537
-](https://drive.google.com/file/d/1armx70IW0bPkxlPhHIfSM24AeI3cpyzR/view?usp=sharing)```
+](https://drive.google.com/file/d/1armx70IW0bPkxlPhHIfSM24AeI3cpyzR/view?usp=sharing)
+```
 
 
 or scan the qr in mobile phone :

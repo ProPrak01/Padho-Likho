@@ -41,11 +41,14 @@ as the app decripts the pdf
 [![Everything Is AWESOME](https://img.youtube.com/vi/Jj0kmasN5K0/0.jpg)](https://www.youtube.com/watch?v=Jj0kmasN5K0)
 
 
+- video preview of qr code scanning:
+https://drive.google.com/file/d/15R2CG9p5Hjz4V4ABCj3N62bB1ES5Zgq_/view?usp=sharing
+
 ## Flowcart of working in details:
 <p align="center">
   <img src="./images/flowchart.png" width="700" title="hover text">
 </p>
-link:https://drive.google.com/file/d/1zZGkErONCO3FBRjroRRIcqvvgA0SQTCF/view?usp=sharing
+link: https://drive.google.com/file/d/1zZGkErONCO3FBRjroRRIcqvvgA0SQTCF/view?usp=sharing
 
 ## Tech Stack
 - **Appwrite**: For backend tasks (user auth , live chat , etc)

@@ -1,5 +1,5 @@
 <p align="left">
-  <img src="./images/main_logo.png" width="50" title="hover text">
+  <img src="./images/logo_main.png" width="50" title="logo">
 </p>
 # Padho-Likho
 

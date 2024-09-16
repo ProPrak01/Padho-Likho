@@ -43,11 +43,11 @@ as the app decripts the pdf
 ## Installation
 
 To get started with Padho-Likho, clone the repository and install the dependencies:
-
+(ensure expo is installed)
 ```bash
 git clone https://github.com/ProPrak01/Padho-Likho.git
 cd padho-likho
-yarn install
+npm install
 ```
 ## Running the App
 ### To start the development server and run the app on different platforms:

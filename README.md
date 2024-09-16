@@ -65,6 +65,13 @@ Download Apk file link:
 ```bash
 https://expo.dev/accounts/proprak/projects/padho-likho/builds/24af0ab0-5868-4a2b-9058-94db58beb537
 ```
+or scan the qr in mobile phone :
+
+<p align="center">
+  <img src="./images/qrdownload.png" width="350" title="hover text">
+</p>
+
+
 Start Development Server android : 
 ```bash
 npx expo run:ios --android

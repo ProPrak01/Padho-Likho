@@ -60,6 +60,22 @@ link: https://drive.google.com/file/d/1zZGkErONCO3FBRjroRRIcqvvgA0SQTCF/view?usp
 
 ## Installation
 
+### (best to view in IOS (as it was developed using it) , instructions provided below)
+
+
+### Direct Download Apk and aab is available :
+Download Apk file link: 
+```bash
+https://expo.dev/accounts/proprak/projects/padho-likho/builds/24af0ab0-5868-4a2b-9058-94db58beb537
+```
+
+Download aab file link: 
+```bash
+https://drive.google.com/file/d/1armx70IW0bPkxlPhHIfSM24AeI3cpyzR/view?usp=sharing
+```
+
+
+
 To get started with Padho-Likho, clone the repository and install the dependencies:
 (ensure expo is installed)
 ```bash
@@ -72,7 +88,13 @@ npm install
 (more detailed info : https://docs.expo.dev/)
 
 
-Start Development Server ios : 
+Start Development Server ios : (CocoaPods is prerequisit)
+```bash
+cd ios
+pod install
+cd ..
+```
+
 ```bash
 npx expo run:ios --device
 ```
@@ -80,17 +102,6 @@ Start Development Server android :
 ```bash
 npx expo run:android --device
 ```
-### Direct Download Apk and aab is available :
-Download Apk file link: 
-```bash
-https://expo.dev/accounts/proprak/projects/padho-likho/builds/24af0ab0-5868-4a2b-9058-94db58beb537
-```
-
-Download aab file link: 
-```bash
-https://drive.google.com/file/d/1armx70IW0bPkxlPhHIfSM24AeI3cpyzR/view?usp=sharing
-```
-
 
 or scan the qr in mobile phone :
 

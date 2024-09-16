@@ -227,10 +227,12 @@ const ChatSection = () => {
         appwriteConfig.chatCollectionId,
         ID.unique(),
         {
+          id: ID.unique(),
           Name: newChatName,
           isPublic: isPublic,
-          createdBy: user.$id,
           participants: [user.$id],
+          createdAt: Date.now().toString(),
+          createdBy: user.$id,
         },
       );
 

@@ -113,7 +113,7 @@ const Home = () => {
               .split("T")[0],
             uri: fileInfo.uri,
           };
-        })
+        }),
       );
 
       setPdfs(pdfData);
@@ -129,7 +129,7 @@ const Home = () => {
   const filteredPdfs = pdfs.filter(
     (pdf) =>
       pdf.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pdf.fileName.toLowerCase().includes(searchQuery.toLowerCase())
+      pdf.fileName.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const uploadToCloudinary = async (uri) => {
@@ -193,7 +193,7 @@ const Home = () => {
       Alert.alert(
         "Upload Successful",
         `Your PDF has been uploaded. URL: ${url}`,
-        [{ text: "OK", onPress: () => setUploadedUrl(null) }]
+        [{ text: "OK", onPress: () => setUploadedUrl(null) }],
       );
     } catch (error) {
       Alert.alert(error.message);

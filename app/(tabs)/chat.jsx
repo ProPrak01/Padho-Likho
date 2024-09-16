@@ -8,11 +8,22 @@ import {
   Modal,
   TextInput,
   Alert,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "../../context/GlobalProvider";
-import { databases, appwriteConfig, ID, Query } from "../../lib/appwrite";
+import {
+  databases,
+  appwriteConfig,
+  ID,
+  Query,
+  createMessage,
+  getVideoDetails,
+} from "../../lib/appwrite";
+
 import SearchInput from "../../components/SearchInput";
+import * as ImagePicker from "expo-image-picker";
+import { Video } from "expo-av";
 
 const POLLING_INTERVAL = 5000; // Polling interval in milliseconds
 
@@ -30,7 +41,9 @@ const ChatSection = () => {
   const [isPublic, setIsPublic] = useState(false);
   const [addUserModal, setAddUserModal] = useState(false);
   const [newUserUsername, setNewUserUsername] = useState("");
-
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [videoTitle, setVideoTitle] = useState("");
+  const [videoPrompt, setVideoPrompt] = useState("");
   useEffect(() => {
     loadChats();
     const intervalId = setInterval(loadChats, POLLING_INTERVAL);
@@ -42,7 +55,7 @@ const ChatSection = () => {
       const response = await databases.listDocuments(
         appwriteConfig.databaseId,
         appwriteConfig.chatCollectionId,
-        [Query.search("participants", user.$id)]
+        [Query.search("participants", user.$id)],
       );
       setChats(response.documents);
     } catch (error) {
@@ -61,7 +74,7 @@ const ChatSection = () => {
       const response = await databases.listDocuments(
         appwriteConfig.databaseId,
         appwriteConfig.messageCollectionId,
-        [Query.equal("chatId", chatId)]
+        [Query.equal("chatId", chatId)],
       );
       setMessages(response.documents);
     } catch (error) {
@@ -69,23 +82,61 @@ const ChatSection = () => {
     }
   };
 
+  const pickVideo = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setSelectedVideo(result.uri);
+      // Open a modal to input video title and prompt
+      Alert.prompt("Video Details", "Enter video title", [
+        {
+          text: "Cancel",
+          onPress: () => setSelectedVideo(null),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: (title) => {
+            setVideoTitle(title);
+            Alert.prompt("Video Details", "Enter video prompt", [
+              {
+                text: "Cancel",
+                onPress: () => setSelectedVideo(null),
+                style: "cancel",
+              },
+              {
+                text: "OK",
+                onPress: (prompt) => setVideoPrompt(prompt),
+              },
+            ]);
+          },
+        },
+      ]);
+    }
+  };
   const sendMessage = async () => {
-    if (newMessage.trim() === "") return;
+    if (newMessage.trim() === "" && !selectedVideo) return;
 
     try {
-      await databases.createDocument(
-        appwriteConfig.databaseId,
-        appwriteConfig.messageCollectionId,
-        ID.unique(),
-        {
-          chatId: selectedChat.$id,
-          senderId: user.$id,
-          senderName: user.username,
-          message: newMessage,
-          timestamp: new Date().toISOString(),
-        }
+      await createMessage(
+        selectedChat.$id,
+        user.$id,
+        user.username,
+        newMessage,
+        selectedVideo,
+        videoTitle,
+        videoPrompt,
       );
+      console.log("Message sent successfully", videoTitle);
       setNewMessage("");
+      setSelectedVideo(null);
+      setVideoTitle("");
+      setVideoPrompt("");
       await loadMessages(selectedChat.$id);
     } catch (error) {
       console.error("Error sending message:", error);
@@ -106,7 +157,28 @@ const ChatSection = () => {
       </Text>
     </TouchableOpacity>
   );
-
+  const [videoPlaybackModal, setVideoPlaybackModal] = useState({
+    visible: false,
+    videoUrl: "",
+    title: "",
+    prompt: "",
+  });
+  const handleVideoPress = async (videoId) => {
+    try {
+      const videoDetails = await getVideoDetails(videoId);
+      setModalVisible(false);
+      // Open a new modal to display video details and play the video
+      setVideoPlaybackModal({
+        visible: true,
+        videoUrl: videoDetails.video,
+        title: videoDetails.title,
+        prompt: videoDetails.prompt,
+      });
+    } catch (error) {
+      console.error("Error fetching video details:", error);
+      Alert.alert("Error", "Failed to load video. Please try again.");
+    }
+  };
   const renderMessageItem = ({ item }) => (
     <View
       className={`p-2 rounded-lg mb-2 ${
@@ -115,11 +187,26 @@ const ChatSection = () => {
           : "bg-gray-300 self-start"
       }`}
     >
-      <Text
-        className={item.senderId === user.$id ? "text-white" : "text-black"}
-      >
-        {item.message}
-      </Text>
+      {item.videoId ? (
+        <TouchableOpacity onPress={() => handleVideoPress(item.videoId)}>
+          <Image
+            source={{
+              uri: item.thumbnail || "https://via.placeholder.com/150",
+            }}
+            style={{ width: 200, height: 150 }}
+            resizeMode="cover"
+          />
+          <Text className="text-white mt-1">
+            {item.videoTitle || "Untitled Video"}
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        <Text
+          className={item.senderId === user.$id ? "text-white" : "text-black"}
+        >
+          {item.message}
+        </Text>
+      )}
       <Text className="text-xs text-gray-500 mt-1">{item.senderName}</Text>
     </View>
   );
@@ -130,7 +217,7 @@ const ChatSection = () => {
   }, []);
 
   const filteredChats = chats.filter((chat) =>
-    chat.Name.toLowerCase().includes(searchQuery.toLowerCase())
+    chat.Name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const createNewChat = async () => {
@@ -144,7 +231,7 @@ const ChatSection = () => {
           isPublic: isPublic,
           createdBy: user.$id,
           participants: [user.$id],
-        }
+        },
       );
 
       setChats([...chats, newChat]);
@@ -157,43 +244,39 @@ const ChatSection = () => {
 
   const addUserToChat = async () => {
     try {
-      // First, find the user by username
       const userResponse = await databases.listDocuments(
         appwriteConfig.databaseId,
         appwriteConfig.userCollectionId,
-        [Query.equal("username", newUserUsername)]
+        [Query.equal("username", newUserUsername)],
       );
 
       if (userResponse.documents.length === 0) {
         Alert.alert(
           "User not found",
-          "Please check the username and try again."
+          "Please check the username and try again.",
         );
         return;
       }
 
       const newUserId = userResponse.documents[0].$id;
 
-      // Check if the user is already in the chat
       if (selectedChat.participants.includes(newUserId)) {
         Alert.alert(
           "User already in chat",
-          "This user is already a participant in this chat."
+          "This user is already a participant in this chat.",
         );
         return;
       }
 
-      // Add the new user to the participants array
       const updatedParticipants = [...selectedChat.participants, newUserId];
 
-      // Update the chat document
       const updatedChat = await databases.updateDocument(
         appwriteConfig.databaseId,
         appwriteConfig.chatCollectionId,
         selectedChat.$id,
         {
           participants: updatedParticipants,
-        }
+        },
       );
 
       setSelectedChat(updatedChat);
@@ -291,6 +374,12 @@ const ChatSection = () => {
               />
               <TouchableOpacity
                 className="ml-4 bg-accent py-2 px-4 rounded-full border-[1px] border-[#ECDFCC]"
+                onPress={pickVideo}
+              >
+                <Text className="text-[#ECDFCC] font-pbold">Video</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="ml-4 bg-accent py-2 px-4 rounded-full border-[1px] border-[#ECDFCC]"
                 onPress={sendMessage}
               >
                 <Text className="text-[#ECDFCC] font-pbold">Send</Text>
@@ -302,6 +391,16 @@ const ChatSection = () => {
                 <Text className="text-[#ECDFCC]">Close</Text>
               </TouchableOpacity>
             </View>
+            {selectedVideo && (
+              <View className="p-2 bg-[#3C3D37]">
+                <Text className="text-[#ECDFCC]">Selected video:</Text>
+                <Image
+                  source={{ uri: selectedVideo }}
+                  style={{ width: 100, height: 100 }}
+                  resizeMode="cover"
+                />
+              </View>
+            )}
           </SafeAreaView>
         </View>
       </Modal>
@@ -355,7 +454,7 @@ const ChatSection = () => {
         visible={addUserModal}
         onRequestClose={() => setAddUserModal(false)}
       >
-        <View className="flex-1 bg-[#1E201E] justify-center items-center  zIndex: 999">
+        <View className="flex-1 bg-[#1E201E] justify-center items-center">
           <View className="bg-[#3C3D37] p-4 rounded-lg w-4/5">
             <Text className="text-[#ECDFCC] text-lg font-pbold mb-4">
               Add user to chat
@@ -380,6 +479,94 @@ const ChatSection = () => {
               onPress={() => setAddUserModal(false)}
             >
               <Text className="text-[#ECDFCC] text-center">Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View className="flex-1 bg-[#1E201E]">
+          <SafeAreaView className="flex-1">
+            {/* ... (keep existing modal content) */}
+            <View className="flex-row items-center p-4 bg-[#3C3D37]">
+              <TextInput
+                className="flex-1 bg-gray-700 text-white p-2 rounded-lg"
+                placeholder="Type your message..."
+                placeholderTextColor="#aaaaaa"
+                value={newMessage}
+                onChangeText={setNewMessage}
+              />
+              <TouchableOpacity
+                className="ml-4 bg-accent py-2 px-4 rounded-full border-[1px] border-[#ECDFCC]"
+                onPress={pickVideo}
+              >
+                <Text className="text-[#ECDFCC] font-pbold">Video</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="ml-4 bg-accent py-2 px-4 rounded-full border-[1px] border-[#ECDFCC]"
+                onPress={sendMessage}
+              >
+                <Text className="text-[#ECDFCC] font-pbold">Send</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="ml-4 bg-accent py-2 px-4 rounded-full border-[1px] border-[#ECDFCC]"
+                onPress={() => setModalVisible(false)}
+              >
+                <Text className="text-[#ECDFCC]">Close</Text>
+              </TouchableOpacity>
+            </View>
+            {selectedVideo && (
+              <View className="p-2 bg-[#3C3D37]">
+                <Text className="text-[#ECDFCC]">Selected video:</Text>
+                <Image
+                  source={{ uri: selectedVideo }}
+                  style={{ width: 100, height: 100 }}
+                  resizeMode="cover"
+                />
+                <Text className="text-[#ECDFCC]">Title: {videoTitle}</Text>
+                <Text className="text-[#ECDFCC]">Prompt: {videoPrompt}</Text>
+              </View>
+            )}
+          </SafeAreaView>
+        </View>
+      </Modal>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={videoPlaybackModal.visible}
+        onRequestClose={() =>
+          setVideoPlaybackModal({ ...videoPlaybackModal, visible: false })
+        }
+      >
+        <View className="flex-1 bg-[#1E201E] justify-center items-center">
+          <View className="bg-[#3C3D37] p-4 rounded-lg w-11/12">
+            <Text className="text-[#ECDFCC] text-lg font-pbold mb-4">
+              {videoPlaybackModal.title}
+            </Text>
+            <Text className="text-[#ECDFCC] mb-2">
+              Prompt: {videoPlaybackModal.prompt}
+            </Text>
+            <Video
+              source={{ uri: videoPlaybackModal.videoUrl }}
+              rate={1.0}
+              volume={1.0}
+              isMuted={false}
+              resizeMode="contain"
+              shouldPlay
+              useNativeControls
+              style={{ width: "100%", height: 300 }}
+            />
+            <TouchableOpacity
+              className="mt-4 py-2 px-4 rounded-full border-[1px] border-[#ECDFCC]"
+              onPress={() =>
+                setVideoPlaybackModal({ ...videoPlaybackModal, visible: false })
+              }
+            >
+              <Text className="text-[#ECDFCC] text-center">Close</Text>
             </TouchableOpacity>
           </View>
         </View>

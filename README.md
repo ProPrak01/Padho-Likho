@@ -1,8 +1,10 @@
-<p align="left">
-  <img src="./images/logo_main.png" width="100" title="logo">
-</p>
+
 
 #  Padho-Likho
+
+<p align="center">
+  <img src="./images/logo_main.png" width="150" title="logo">
+</p>
 
 **Padho-Likho** is an innovative mobile app designed for educational purposes and secure note sharing. Developed using React Native and Expo, the app integrates advanced features such as computer vision, QR code scanning, and PDF management to enhance the way users create, share, and interact with educational materials.
 

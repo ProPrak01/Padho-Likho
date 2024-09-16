@@ -40,18 +40,18 @@ const Home = () => {
 
   const [qrCodeValue, setQrCodeValue] = useState("");
   const [qrCodeModalVisible, setQrCodeModalVisible] = useState(false);
-  React.useEffect(() => {
-    const activate = async () => {
-      await ScreenCapture.preventScreenCaptureAsync();
-    };
-    activate();
-    return () => {
-      const deactivate = async () => {
-        await ScreenCapture.allowScreenCaptureAsync();
-      };
-      deactivate();
-    };
-  }, []);
+  // React.useEffect(() => {
+  //   const activate = async () => {
+  //     await ScreenCapture.preventScreenCaptureAsync();
+  //   };
+  //   activate();
+  //   return () => {
+  //     const deactivate = async () => {
+  //       await ScreenCapture.allowScreenCaptureAsync();
+  //     };
+  //     deactivate();
+  //   };
+  // }, []);
 
   const encodeUrl = (url) => {
     try {

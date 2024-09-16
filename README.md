@@ -58,7 +58,7 @@ npx expo run:ios --device
 ```
 Start Development Server android : 
 ```bash
-npx expo run:ios --android
+npx expo run:android --device
 ```
 ### Direct Download Apk and aab is available :
 Download Apk file link: 
@@ -72,10 +72,12 @@ or scan the qr in mobile phone :
 </p>
 
 
-Start Development Server android : 
+Start Development Server ios : 
 ```bash
-npx expo run:ios --android
+npx expo run:ios --device
 ```
+build file of ios app could not be provided due to some constraints
+
 ## Dependencies
 
 Below is a list of key dependencies used in this project:

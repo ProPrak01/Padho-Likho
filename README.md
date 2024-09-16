@@ -9,17 +9,25 @@
 - **Secure PDF Storage**: Upload PDFs to Cloudinary with encryption, ensuring that sensitive information remains secure.
 - **Encrypted QR Codes**: Generate encrypted QR codes for uploaded PDFs. The links to the PDFs are hidden from the user and only accessible through the QR codes.
 
-preview:
 
-<p align="center">
-  <img src="./images/temphack1.png" width="350" title="hover text">
-</p>
 
 ### QR Code Functionality
 - **QR Scanning**: Scan QR codes to access encrypted PDFs. The app will decrypt the PDFs and display them in a read-only mode, preventing screenshots and unauthorized access.
 
 ### Chat Functionality
 - **Public and Private Channels**: Engage in text-based chats through public and private channels. Future updates will include video messaging capabilities.
+
+
+## for example
+- you can scan the given qr code with any other app or camera it will return a code text but when scanned with this app , it will open a pdf in thee app.
+as the app decripts the pdf
+<p align="center">
+  <img src="./images/temphack1.png" width="350" title="hover text">
+</p>
+
+- video preview of pdf creation and qr code generation:
+[![Everything Is AWESOME](https://img.youtube.com/vi/StTqXEQ2l-Y/0.jpg)](https://www.youtube.com/watch?v=StTqXEQ2l-Y "Everything Is AWESOME")
+
 
 ## Tech Stack
 

@@ -5,7 +5,7 @@
 ## Features
 
 ### PDF Creation and Management
-- **Image to PDF Conversion**: Capture images and convert them into PDFs directly within the app.
+- **Image to PDF Conversion**: Capture images and convert them into PDFs directly within the app utilizing photo aligning and resizing.
 - **Secure PDF Storage**: Upload PDFs to Cloudinary with encryption, ensuring that sensitive information remains secure.
 - **Encrypted QR Codes**: Generate encrypted QR codes for uploaded PDFs. The links to the PDFs are hidden from the user and only accessible through the QR codes.
 
@@ -32,25 +32,26 @@ as the app decripts the pdf
 
 
 ## Tech Stack
-
+- **Appwrite**: For backend tasks (user auth , live chat , etc)
 - **React Native**: For building the mobile app.
 - **Expo**: For app development and deployment.
 - **Cloudinary**: For PDF storage and management.
 - **CryptoJS**: For encryption and decryption of PDF links.
-- **Stream-Chat-Expo**: For implementing chat features.
 - **Various Expo Modules**: Such as `expo-camera`, `expo-barcode-scanner`, and `expo-file-system` for core functionalities.
 
 ## Installation
 
 To get started with Padho-Likho, clone the repository and install the dependencies:
-
+(ensure expo is installed)
 ```bash
-git clone https://github.com/your-username/padho-likho.git
+git clone https://github.com/ProPrak01/Padho-Likho.git
 cd padho-likho
-yarn install
+npm install
 ```
 ## Running the App
 ### To start the development server and run the app on different platforms:
+(more detailed info : https://docs.expo.dev/)
+
 
 Start Development Server ios : 
 ```bash
@@ -58,17 +59,33 @@ npx expo run:ios --device
 ```
 Start Development Server android : 
 ```bash
-npx expo run:ios --android
+npx expo run:android --device
 ```
 ### Direct Download Apk and aab is available :
 Download Apk file link: 
 ```bash
 https://expo.dev/accounts/proprak/projects/padho-likho/builds/24af0ab0-5868-4a2b-9058-94db58beb537
 ```
-Start Development Server android : 
+
+Download aab file link: 
 ```bash
-npx expo run:ios --android
+https://drive.google.com/file/d/1armx70IW0bPkxlPhHIfSM24AeI3cpyzR/view?usp=sharing
 ```
+
+
+or scan the qr in mobile phone :
+
+<p align="center">
+  <img src="./images/qrdownload.png" width="350" title="hover text">
+</p>
+
+
+Start Development Server ios : 
+```bash
+npx expo run:ios --device
+```
+build file of ios app could not be provided due to some constraints
+
 ## Dependencies
 
 Below is a list of key dependencies used in this project:
@@ -85,7 +102,7 @@ Below is a list of key dependencies used in this project:
 | `stream-chat-expo`                     | ^5.37.0     |
 
 ## Future Implications
-We welcome contributions to Padho-Likho! To contribute, fork the repository, make your changes, and submit a pull request.
+Implementing video sending and streaming (content related to doubt solving , etc. in the chat)
 
 ## License
 This project is licensed under the Apache-2.0 license. See the LICENSE file for more information.

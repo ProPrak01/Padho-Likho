@@ -45,7 +45,7 @@ as the app decripts the pdf
 <p align="center">
   <img src="./images/flowchart.png" width="700" title="hover text">
 </p>
-
+link:https://drive.google.com/file/d/1zZGkErONCO3FBRjroRRIcqvvgA0SQTCF/view?usp=sharing
 
 ## Tech Stack
 - **Appwrite**: For backend tasks (user auth , live chat , etc)

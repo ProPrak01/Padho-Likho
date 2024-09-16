@@ -32,7 +32,7 @@ as the app decripts the pdf
 
 
 ## Tech Stack
-
+- **Appwrite**: For backend tasks (user auth , live chat , etc)
 - **React Native**: For building the mobile app.
 - **Expo**: For app development and deployment.
 - **Cloudinary**: For PDF storage and management.

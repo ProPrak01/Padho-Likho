@@ -51,6 +51,8 @@ npm install
 ## Running the App
 ### To start the development server and run the app on different platforms:
 (more detailed info : https://docs.expo.dev/)
+
+
 Start Development Server ios : 
 ```bash
 npx expo run:ios --device
@@ -64,6 +66,13 @@ Download Apk file link:
 ```bash
 https://expo.dev/accounts/proprak/projects/padho-likho/builds/24af0ab0-5868-4a2b-9058-94db58beb537
 ```
+
+Download aab file link: 
+```bash
+[https://expo.dev/accounts/proprak/projects/padho-likho/builds/24af0ab0-5868-4a2b-9058-94db58beb537
+](https://drive.google.com/file/d/1armx70IW0bPkxlPhHIfSM24AeI3cpyzR/view?usp=sharing)```
+
+
 or scan the qr in mobile phone :
 
 <p align="center">

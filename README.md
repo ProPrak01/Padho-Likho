@@ -26,7 +26,7 @@ as the app decripts the pdf
 </p>
 
 - video preview of pdf creation and qr code generation:
-[![Everything Is AWESOME](https://img.youtube.com/vi/StTqXEQ2l-Y/0.jpg)](https://www.youtube.com/watch?v=StTqXEQ2l-Y "Everything Is AWESOME")
+[![Everything Is AWESOME](https://img.youtube.com/vi/Jj0kmasN5K0/0.jpg)](https://www.youtube.com/watch?v=Jj0kmasN5K0))
 
 
 ## Tech Stack
